@@ -47,3 +47,52 @@ def insert(my_heap, priority_value, value):
     my_heap["size"] += 1
     swim(my_heap, my_heap["size"])
     return my_heap
+
+def get_first_priority(my_heap):
+    if is_empty(my_heap):
+        return None
+    first = lt.get_element(my_heap["elements"], 1)
+    return pqe.get_value(first)
+
+def sink(my_heap, pos):
+    elems = my_heap["elements"]
+    size = my_heap["size"]
+    while 2 * pos <= size:
+        child = 2 * pos
+        if child < size:
+            left = lt.get_element(elems, child)
+            right = lt.get_element(elems, child + 1)
+            if not priority(my_heap, left, right):
+                child += 1
+        parent_elem = lt.get_element(elems, pos)
+        child_elem = lt.get_element(elems, child)
+        if priority(my_heap, parent_elem, child_elem):
+            break
+        exchange(my_heap, pos, child)
+        pos = child
+
+def remove(my_heap):
+    if is_empty(my_heap):
+        return None
+    elems = my_heap["elements"]
+    first_elem = lt.get_element(elems, 1)
+    last_elem = lt.get_element(elems, my_heap["size"])
+    lt.exchange(elems, 1, my_heap["size"])
+
+    lt.remove_last(elems)
+    my_heap["size"] -= 1
+    if my_heap["size"] > 0:
+        sink(my_heap, 1)
+    return pqe.get_value(first_elem)
+
+def is_present_value(my_heap, value):
+    elems = my_heap["elements"]
+    size = my_heap["size"]
+    for i in range(1, size + 1):
+        elem = lt.get_element(elems, i)
+        if pqe.get_value(elem) == value:
+            return i
+    return -1
+
+def contains(my_heap, value):
+    return is_present_value(my_heap, value) != -1
